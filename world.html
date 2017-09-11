@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+                             =_-___
+                           o    \__ \
+                          o       __| \
+                           o      \__  \
+                             oooo    \  \
+                                      \  \
+        __________________             |   \
+       |__________________|             \   |
+        \/\/\/\/\/\/\/\/\/     _----_    |   |
+         \/\/\/\/\/\/\/\/     |      \   |   |
+          \/\/\/\/\/\/\/      |       |    |  |
+           |/\/\/\/\/\|        |       \__/    |
+           |/\/\/\/\/\|         __---          |
+           |/\/\/\/\/\|       /   \            |
+                             |     |          |
+                             |   /            |
+                             |   \            |
+                             |   | \          |
+                             |   |   \____-----\
+                             |   |    \____-----
+                              |  |    |          \
+                              |  |   |             \
+                               \  \_|_      |       |
+                                \____/  ___/ \_____/\
+                                   /    /       \     \
+                                 /     /          \     \
+                                /    /              \    \
+                              /    /                  \    \
+                             /   /                      \   \
+                       /\   /  /                          \  |
+                      |  \/ \/                              \/ \
+                       \    |                             __/   |
+                         \_/                            /______/
+
+
+   ____   __   __      ____       _    __     __           ____    
+U | __")u \ \ / /     |  _"\  U  /"\  u\ \   /"/u  ___    |  _"\   
+ \|  _ \/  \ V /     /| | | |  \/ _ \/  \ \ / //  |_"_|  /| | | |  
+  | |_) | U_|"|_u    U| |_| |\ / ___ \  /\ V /_,-. | |   U| |_| |\ 
+  |____/    |_|       |____/ u/_/   \_\U  \_/-(_/U/| |\u  |____/ u 
+ _|| \\_.-,//|(_       |||_    \\    >>  //   .-,_|___|_,-.|||_    
+(__) (__)\_) (__)     (__)_)  (__)  (__)(__)   \_)-' '-(_/(__)_)   
+
+
+Libraries & APIs used: 
+
+restcountries.eu
+worldbank api
+jqvmap
+jquery
+
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <link rel="shortcut icon" href="http://www-scf.usc.edu/~dgarry/img/headshot.jpg" />
+    <link href="https://fonts.googleapis.com/css?family=Rosario" rel="stylesheet">
+    <style>
+      html, body {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: black;
+        display: inline-block;
+        font-family: 'Rosario', sans-serif;
+      }
+      #vmap {
+        width: 80%;
+        height: 100%;
+        display: inline-block;
+      }
+      #vkey {
+        width: 18%;
+        height: 100%;
+        padding: 1%;
+        display: inline-block;
+        text-align: center;
+        background-color: black;
+        position: absolute;
+
+      }
+      #vheader {
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        display: flex;
+        justify-content: center; /* align horizontal */
+        align-items: center; /* align vertical */
+        width: 100%;
+        height: 8%;
+        background-color: lightgrey;
+        color: black;
+        text-transform: uppercase;
+        font-weight: bold;
+        font-size: 1.6vw;
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+      #vmodal {
+        width: 100%;
+        height: 50%;
+        background-color: lightgrey;
+        font-size: 1.1vw;
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+      #vinfo {
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        display: flex;
+        justify-content: top; /* align horizontal */
+        align-items: left; /* align vertical */
+        padding: 2%;
+        width: 96%;
+        height: 36%;
+        background-color: lightgrey;
+        color: black;
+        text-transform: capitalize;
+        overflow-x: hidden;
+        overflow-y: auto;
+        font-size: 1.1vw;
+        display: inline-block;
+      }
+      .flagImg {
+        width: 100%;
+        height: auto;
+      }
+      .leftAlign {
+        text-align: left;
+        font-size: 1.05vw;
+      }
+      .leftAlign ul {
+        list-style: none;
+        margin-left: -2%;
+      }
+      .descInfo {
+        width: 100%;
+        display: block;
+      }
+      .footer {
+        width: 100%;
+        display: block;
+        margin-top: 1em;
+        font-size: 0.6vw;
+        text-align: center;
+      }
+      .footer a {
+        text-decoration: none;
+        color: #8b0000;
+        opacity: 0.6;
+      }
+      .footer a:hover {
+        opacity: 1;
+      }
+    </style>
+    <title>Income Inequality Map</title>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <link href="../dist/jqvmap.css" media="screen" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../dist/jquery.vmap.js"></script>
+    <script type="text/javascript" src="../dist/maps/jquery.vmap.world.js" charset="utf-8"></script>
+    <script type="text/javascript" src="js/income.js"></script>
+
+    <script>
+    function numberWithCommas(x) {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    function roundTo(n, digits) {
+       if (digits === undefined) {
+         digits = 0;
+       }
+
+       var multiplicator = Math.pow(10, digits);
+       n = parseFloat((n * multiplicator).toFixed(11));
+       var test =(Math.round(n) / multiplicator);
+       return +(test.toFixed(digits));
+     }
+    $.getJSON('js/countries.json', function(countries) {
+      $.getJSON('js/country_information.json', function(country_information) {
+        jQuery(document).ready(function () {
+          jQuery('#vmap').vectorMap({
+            map: 'world_en',
+            backgroundColor: '#000000',
+            color: '#FFFFFF',
+            borderColor: '#000000',
+            borderOpacity: 1,
+            borderWidth: .1,
+            hoverOpacity: 0.7,
+            selectedColor: '#666666',
+            enableZoom: true,
+            showTooltip: true,
+            scaleColors: ['#00FF00', '#FF0000'],
+            values: gini_data,
+            normalizeFunction: 'polynomial',
+            onRegionSelect: function(event, code, region)
+            {
+              modalChange(code);
+            },
+            onRegionDeselect: function(event, code, region)
+            {
+              modalChange("none");
+            }
+          });
+        });
+        function modalChange(code){
+          var country;
+          var modalInfo = "";
+          var descInfo = "";
+          if(code === "none"){
+            country = "Select a Country";
+          } else {
+            country = countries[code].name;
+            var country_number = -1;
+            for(var i =0; i<country_information.length; i++){
+              if(country_information[i].alpha2Code == code.toUpperCase()){
+                country_number = i;
+                break;
+              }
+            }
+            if(country_number != -1) {
+              modalInfo += "<img class='flagImg' src='"+ country_information[country_number].flag +"'>";
+              modalInfo += "<div class='leftAlign'><ul>";
+              modalInfo += "<li>" + "Subregion: " + country_information[country_number].subregion +"</li>";
+              modalInfo += "<li>" + "Capital: " + country_information[country_number].capital +"</li>";
+              modalInfo += "<li>" + "Area: " + numberWithCommas(country_information[country_number].area) +"</li>";
+              modalInfo += "<li>" + "Population: " + numberWithCommas(country_information[country_number].population) +"</li>";
+              modalInfo += "<li>" + "Population Density: " + roundTo((country_information[country_number].population/country_information[country_number].area),2) +"</li>";
+              modalInfo += "<li>" + "Currency: " + country_information[country_number].currencies[0].name +"</li>";
+              var ineq = country_information[country_number].gini;
+              if(!ineq) ineq = "No data";
+              modalInfo += "<li>" + "<span title='The Gini index or Gini coefficient is a statistical measure of distribution developed by the Italian statistician Corrado Gini in 1912. It is often used as a gauge of economic inequality, measuring income distribution or, less commonly, wealth distribution among a population. The coefficient ranges from 0 (or 0%) to 1 (or 100%), with 0 representing perfect equality and 1 representing perfect inequality. Values over 1 are theoretically possible due to negative income or wealth.'>Gini</span>: " + ineq  +"</li>";
+              modalInfo += "</ul></div>";
+            } else {
+              modalInfo += "No data available";
+            }
+
+
+            descInfo += "<div class='descInfo'>" + countries[code].name + "</div>";
+            descInfo += "<div class='footer'>";
+            descInfo += "Data Sourced From ";
+            descInfo += "<a target='_blank' href='https://datahelpdesk.worldbank.org/knowledgebase/articles/902049'>The World Bank</a>";
+            descInfo += ", ";
+            descInfo += "<a target='_blank' href='https://github.com/manifestinteractive/jqvmap'>JQVMap</a>";
+            descInfo += ", & ";
+            descInfo += "<a target='_blank' href='https://restcountries.eu/#api-endpoints-response-example'>RESTCountries</a>";
+            descInfo += ".";
+            descInfo += "</div>";
+          }
+          console.log("Code: "+code.toUpperCase() + " Country: "+ country);
+          $("#vheader").text(country);
+          $("#vmodal").html(modalInfo);
+          $("#vinfo").html(descInfo);
+        }
+      });
+    });
+    </script>
+  </head>
+  <body>
+    <div id="vmap"></div>
+    <div id="vkey">
+      <div id="vheader">
+        Select a Country
+      </div>
+      <div id="vmodal">
+      </div>
+      <div id="vinfo">
+      </div>
+    </div>
+  </body>
+</html>
